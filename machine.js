@@ -27,7 +27,6 @@ const trafficLightMachine = createMachine({
     }
 });
 
-
 // Machine instance with internal state
 const toggleService = interpret(trafficLightMachine)
     .onTransition((state) => console.log(state.value))
