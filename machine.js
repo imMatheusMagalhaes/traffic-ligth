@@ -1,40 +1,21 @@
-const { createMachine, interpret, send } = require('xstate');
+const { createMachine } = require("xstate");
+const { carMachine } = require("./carMachine");
+const { peopleMachine } = require("./peopleMachine");
 
-// Stateless machine definition
-// machine.transition(...) is a pure function used by the interpreter.
-const trafficLightMachine = createMachine({
-    id: 'trafficLight',
-    initial: 'closed',
-    states: {
-        open: {
-            actions: ['switch'],
-            on: { TOGGLE: 'attention' }
-        },
-        closed: { on: { TOGGLE: 'open' } },
-        attention: { on: { TOGGLE: 'closed' } },
-    }
-}, {
-    guards: {
-
+const machine = createMachine({
+  id: "machine",
+  states: {
+    car: {
+      invoke: {
+        src: carMachine,
+        id: "car",
+      },
     },
-    actions: {
-        switch: (ctx, evt) => {
-            send(ctx, "TOGGLE")
-        }
+    people: {
+      invoke: {
+        src: peopleMachine,
+        id: "car",
+      },
     },
-    services: {
-
-    }
+  },
 });
-
-// Machine instance with internal state
-const toggleService = interpret(trafficLightMachine)
-    .onTransition((state) => console.log(state.value))
-    .start();
-// => 'inactive'
-
-toggleService.send('TOGGLE');
-// => 'active'
-
-toggleService.send('TOGGLE');
-// => 'inactive'
